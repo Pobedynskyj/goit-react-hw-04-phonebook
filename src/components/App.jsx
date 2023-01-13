@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import s from '../App.module.css';
+import s from './App.module.css';
 import Contacts from './Contacts';
 import Filter from './Filter';
 import Form from './Form';
@@ -9,13 +9,17 @@ export default function App() {
     JSON.parse(localStorage.getItem('contacts')) || []
   );
   const [filter, setFilter] = useState('');
-
-  const handleSubmit = object => {
-    setContacts({ contacts: [...contacts, object] });
-
+  const handleSubmit = values => {
+    setContacts(prevState => {
+      prevState.push(values);
+      return prevState;
+    });
     // const checkContact = contacts.find(
-    //   contact => contact.name.toLowerCase() === object.name.toLowerCase()
+    //   contact => contact.name.toLowerCase() === values.name.toLowerCase()
     // );
+    // if (checkContact) {
+    //   alert(`${values.name} is already in contacts`);
+    // }
   };
 
   const handleDelete = id => {
@@ -27,21 +31,26 @@ export default function App() {
   };
 
   const visibleContacts = () => {
-    const normalize = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalize)
-    );
+    // const normalize = filter.toLowerCase();
+    // return contacts.filter(contact =>
+    //   contact.name.toLowerCase().includes(normalize)
+    // );
   };
 
   useEffect(() => {
+    console.log(contacts);
     const getStorageContacts = localStorage.getItem('contacts');
-
-    if (getStorageContacts !== null) {
-      const contactsStorage = JSON.parse(getStorageContacts);
-      if (contactsStorage.length !== contacts.length) {
-        localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-      }
-    }
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+    console.log(contacts);
+    // if (getStorageContacts !== null) {
+    //   const contactsStorage = JSON.parse(getStorageContacts);
+    //   if (contactsStorage.length !== contacts.length) {
+    //     localStorage.setItem('contacts', JSON.stringify(contacts));
+    //     console.log(contacts);
+    //   }
+    // } else {
+    //   localStorage.setItem('contacts', JSON.stringify(contacts));
+    // }
   }, [contacts]);
   return (
     <div className={s.mainDiv}>
