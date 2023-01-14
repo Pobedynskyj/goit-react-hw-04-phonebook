@@ -10,20 +10,19 @@ export default function App() {
   );
   const [filter, setFilter] = useState('');
   const handleSubmit = values => {
-    setContacts(prevState => {
-      prevState.push(values);
-      return prevState;
-    });
-    // const checkContact = contacts.find(
-    //   contact => contact.name.toLowerCase() === values.name.toLowerCase()
-    // );
-    // if (checkContact) {
-    //   alert(`${values.name} is already in contacts`);
-    // }
+    const checkContact = contacts.find(
+      contact => contact.name.toLowerCase() === values.name.toLowerCase()
+    );
+    if (checkContact) {
+      alert(`${values.name} is already in contacts`);
+      return;
+    }
+    setContacts([...contacts, values]);
   };
 
   const handleDelete = id => {
-    setContacts(prevState => prevState.filter(el => el.id !== id));
+    const newState = contacts.filter(el => el.id !== id);
+    setContacts(newState);
   };
 
   const filterByName = e => {
@@ -31,26 +30,14 @@ export default function App() {
   };
 
   const visibleContacts = () => {
-    // const normalize = filter.toLowerCase();
-    // return contacts.filter(contact =>
-    //   contact.name.toLowerCase().includes(normalize)
-    // );
+    const normalize = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalize)
+    );
   };
 
   useEffect(() => {
-    console.log(contacts);
-    const getStorageContacts = localStorage.getItem('contacts');
     localStorage.setItem('contacts', JSON.stringify(contacts));
-    console.log(contacts);
-    // if (getStorageContacts !== null) {
-    //   const contactsStorage = JSON.parse(getStorageContacts);
-    //   if (contactsStorage.length !== contacts.length) {
-    //     localStorage.setItem('contacts', JSON.stringify(contacts));
-    //     console.log(contacts);
-    //   }
-    // } else {
-    //   localStorage.setItem('contacts', JSON.stringify(contacts));
-    // }
   }, [contacts]);
   return (
     <div className={s.mainDiv}>
@@ -58,7 +45,7 @@ export default function App() {
       <Form changeAppState={handleSubmit} />
       <h1 className={s.mainTitle}>Contacts</h1>
       <Filter filterName={filterByName} value={filter} />
-      <Contacts contacts={visibleContacts} onDelete={handleDelete} />
+      <Contacts contacts={visibleContacts()} onDelete={handleDelete} />
     </div>
   );
 }
